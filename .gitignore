@@ -1,0 +1,11 @@
+# Logs generados automaticamente por start/run/stop.bat
+logs/
+
+# Variables de entorno locales (contienen rutas y claves)
+.env
+
+# PID files (estado runtime)
+*.pid
+
+# Codigo de graphify: se clona aparte con setup.bat (no versionar como repo anidado)
+graphify-src/

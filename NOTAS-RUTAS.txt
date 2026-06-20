@@ -1,0 +1,85 @@
+NOTAS DE RUTAS  -  Graphify
+============================
+
+Estructura final (minima):
+  D:\graphy\
+    start.bat            <- Setup + Ollama + indexa los repos (una vez)
+    run.bat              <- Inicia servidor MCP + watchers (auto-update)
+    stop.bat             <- Detiene servidor MCP + watchers
+    .env                 <- toda la config en un solo lugar
+    NOTAS-RUTAS.txt      <- este archivo
+    scripts\
+      _env.bat           <- carga .env (compartido, no repetir logica)
+      setup.bat          <- verifica/instala
+      ollama.bat         <- instala/levanta Ollama, detecta VRAM, baja modelo
+      index.bat          <- indexa todos los repos (backend ollama)
+      serve.bat          <- inicia el server MCP + watchers
+      watch.bat          <- lanza 'graphify watch' por repo (auto-update)
+      stop.bat           <- detiene server + watchers
+    graphify-src\  logs\  mcp-configs\
+
+HARDWARE DETECTADO (18-jun-2026):
+  GPU: NVIDIA GeForce RTX 3080 (~10-12 GB VRAM)  |  RAM: 32 GB
+  -> Modelo Ollama elegido automaticamente: qwen2.5-coder:7b
+
+SEMANTICA = OLLAMA (local, gratis, sin topes):
+  ollama.bat detecta VRAM y elige modelo:
+    >=16GB -> qwen2.5-coder:14b | 6-16GB -> 7b | <6GB -> 3b | <3.5GB -> 1.5b
+  index.bat indexa con  graphify . --backend ollama
+
+QUE SE INDEXA / QUE NO:
+  - Tu .gitignore SIEMPRE se respeta (graphify lo lee solo, automatico).
+  - Ademas, graphifyignore.template se copia como .graphifyignore en cada
+    repo (deploy-ignore.bat) y excluye assets binarios/imagenes/modelos/
+    media: cosas que NO son codigo y que el modelo local no puede convertir
+    en JSON (causaban los "invalid JSON / hollow response").
+  - Para reincluir algo, edita el .graphifyignore de ese repo.
+  - Si algun chunk de CODIGO/doc real aun sale "invalid JSON" con 7b,
+    cambia OLLAMA_MODEL a qwen2.5-coder:14b (mejor adherencia a JSON;
+    mas lento en la 3080).
+
+AUTO-UPDATE:
+  run.bat deja un 'graphify watch' por repo. Cambios de CODIGO re-indexan
+  solos al instante (sin LLM). Cambios de DOCS/imagenes piden re-correr
+  start.bat para refrescar la parte semantica.
+  NOTA: watch necesita 'watchdog' (pip install watchdog) si avisa que falta.
+
+3 archivos en la raiz para usar:
+  start.bat = preparar todo   |   run.bat = arrancar   |   stop.bat = frenar
+Los .bat de scripts\ no se abren a mano (los llaman los de la raiz).
+
+
+LOGS
+----
+  logs\setup_FECHA_HORA.log  <- todo lo que muestra start.bat (se guarda solo)
+  logs\graphify.out / .err   <- salida del servidor (lo genera run.bat)
+  logs\graphify.pid          <- PID del servidor en marcha
+
+Al final de start.bat sale un RESUMEN con cuantos MISSING / WARN / ERROR hubo
+y su detalle. El script NO se frena ante MISSING ni WARN: sigue de largo.
+  MISSING = falta un prerrequisito o archivo (ej: winget, mcp config).
+  WARN    = un repo de GRAPHIFY_REPOS no se pudo indexar; sigue con el resto.
+
+
+RUTAS QUE REVISAR (antes estaban hardcodeadas e inconsistentes)
+---------------------------------------------------------------
+
+1) GRAPHIFY_REPOS (en .env) es la fuente de verdad de que repos se
+   indexan y desde donde se sirve el graph. Hoy:
+   D:\GitHub;D:\GitLab;D:\ComfyUI;C:\playground-ia;C:\playground-ia-data
+   -> Edita SOLO el .env para agregar/quitar repos.
+
+2) serve.bat ya NO hardcodea D:\GitHub\graphify-out\graph.json.
+   Ahora recorre GRAPHIFY_REPOS y sirve el PRIMER graph.json que exista.
+   (Antes solo miraba GitHub/GitLab/ComfyUI; ignoraba los playground.)
+
+3) .graphifyignore: el script viejo miraba D:\GitHub\.graphifyignore.
+   Lo cambie a %GRAPHY_HOME%\.graphifyignore (D:\graphy\.graphifyignore).
+   >> DUDA: confirmame donde vive realmente ese archivo. Si va por repo,
+      avisame y lo muevo a un chequeo por cada root de GRAPHIFY_REPOS.
+
+4) PYTHON de uv en serve.bat:
+   %USERPROFILE%\AppData\Roaming\uv\tools\graphifyy\Scripts\python.exe
+   >> DUDA: "graphifyy" con doble "y". Verifica el nombre real de la
+      carpeta de la herramienta uv. Si esta mal, el server no arranca.
+      (serve.bat ahora avisa con [WARN] si esa ruta no existe.)

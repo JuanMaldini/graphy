@@ -1,0 +1,9 @@
+﻿Add this to your Claude CLI settings (~/.claude.json or project .mcp.json):
+
+{
+  "mcpServers": {
+    "graphify": {
+      "url": "http://127.0.0.1:8765/mcp"
+    }
+  }
+}

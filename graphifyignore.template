@@ -1,0 +1,73 @@
+# .graphifyignore  (sintaxis estilo .gitignore)
+# graphify YA respeta tu .gitignore ademas de esto.
+# Aca excluimos archivos que NO son codigo: assets binarios, imagenes,
+# modelos, media. Son los que el modelo local no puede convertir en JSON
+# (y que no aportan nada util al grafo de codigo).
+
+# --- Imagenes / vectores / iconos ---
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.bmp
+*.tiff
+*.ico
+*.webp
+*.svg
+
+# --- Fuentes ---
+*.ttf
+*.otf
+*.woff
+*.woff2
+*.eot
+
+# --- Audio / video ---
+*.mp4
+*.mov
+*.avi
+*.mkv
+*.webm
+*.wav
+*.mp3
+*.flac
+*.ogg
+
+# --- 3D / texturas / binarios pesados (3ds Max, Unreal, etc.) ---
+*.fbx
+*.obj
+*.blend
+*.max
+*.exr
+*.hdr
+*.psd
+*.tga
+*.dds
+*.uasset
+*.umap
+
+# --- Modelos de IA / pesos (ComfyUI, etc.) ---
+*.safetensors
+*.ckpt
+*.pth
+*.pt
+*.onnx
+*.gguf
+*.bin
+
+# --- Archivos comprimidos ---
+*.zip
+*.rar
+*.7z
+*.tar
+*.gz
+
+# --- Lockfiles y minificados (ruido, no aportan al grafo) ---
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+poetry.lock
+uv.lock
+Cargo.lock
+*.min.js
+*.min.css
