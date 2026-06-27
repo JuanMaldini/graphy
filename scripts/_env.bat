@@ -8,6 +8,7 @@ rem
 rem  1) Carga el .env (solo rutas especificas de esta maquina).
 rem  2) Aplica los valores fijos (hardcoded) del proyecto.
 rem  3) Deriva rutas a partir de GRAPHY_HOME.
+rem  4) Agrega el bin de uv al PATH de la sesion.
 rem ============================================================
 
 rem --- 1) Cargar .env de la raiz (si existe) ---
@@ -32,5 +33,12 @@ set "GRAPHIFY_BACKEND=ollama"
 
 rem --- 3) Derivado de GRAPHY_HOME ---
 set "GRAPHIFY_QUERY_LOG=%GRAPHY_HOME%\logs\queries.log"
+
+rem --- 4) PATH de las herramientas de uv (graphify, graphify-mcp) ---
+rem     uv instala los ejecutables en %USERPROFILE%\.local\bin, que NO esta
+rem     en el PATH por defecto. Sin esto, 'graphify' sale MISSING y se cae
+rem     todo (index.bat / serve.bat). Lo agregamos a la sesion actual.
+set "UV_BIN=%USERPROFILE%\.local\bin"
+echo ;%PATH%; | find /I ";%UV_BIN%;" >nul || set "PATH=%UV_BIN%;%PATH%"
 
 exit /b 0

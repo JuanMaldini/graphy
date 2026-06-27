@@ -71,3 +71,33 @@ uv.lock
 Cargo.lock
 *.min.js
 *.min.css
+
+# --- Carpetas de IDE / cache (NO son codigo: solo basura de texto) ---
+.vs/
+.vscode/
+.idea/
+.git/
+node_modules/
+__pycache__/
+.cache/
+
+# --- Build .NET / C++ / MSVC ---
+bin/
+obj/
+*.pdb
+*.ilk
+*.tlog
+*.v1.txt
+HierarchyCache*
+
+# --- Unreal Engine (clothfigurator y similares) ---
+Intermediate/
+Binaries/
+Saved/
+DerivedDataCache/
+Build/
+
+# --- SDKs / toolchains que se cuelan al escanear (no son tu codigo) ---
+# (Windows SDK, etc. — solo aplican si estan dentro de un repo)
+Windows Kits/
+MSBuild/

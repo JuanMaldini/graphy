@@ -26,12 +26,14 @@ rem     Usamos pip dentro del venv en vez de uv tool install --force,
 rem     porque --force intenta borrar Scripts\ mientras python.exe esta corriendo.
 "!PY!" -c "import uvicorn" >nul 2>&1
 if !errorlevel! neq 0 (
-    echo [INFO] Falta uvicorn. Instalando con pip en el venv de graphifyy...
-    "!PY!" -m pip install --quiet uvicorn starlette
+    echo [INFO] Falta uvicorn. Instalando extras [ollama,mcp] de graphifyy con uv...
+    rem  El venv de uv no trae pip; reinstalamos la herramienta con los extras.
+    rem  Incluimos [ollama] para NO perder el backend de indexado.
+    uv tool install "graphifyy[ollama,mcp]" --force
     if !errorlevel! neq 0 (
-        echo [ERROR] Fallo pip install uvicorn starlette.
-        echo         Proba manualmente (con graphify detenido):
-        echo           uv tool install "graphifyy[mcp]" --force
+        echo [ERROR] Fallo uv tool install "graphifyy[ollama,mcp]".
+        echo         Proba manualmente ^(con el server detenido^):
+        echo           uv tool install "graphifyy[ollama,mcp]" --force
         exit /b 1
     )
     echo [OK] uvicorn instalado.

@@ -25,6 +25,8 @@ rem --- Corre setup + ollama + index mostrando en pantalla Y guardando en log --
     call "scripts\deploy-ignore.bat"
     echo.
     call "scripts\index.bat"
+    echo.
+    call "scripts\ollama-unload.bat"
 ) 2>&1 | powershell -NoProfile -Command "$input | Tee-Object -FilePath '%LOG%'"
 
 echo.

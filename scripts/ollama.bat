@@ -22,11 +22,11 @@ if !errorlevel! neq 0 (
 
 rem --- 2) Dependencia clave: el backend ollama de graphify usa el paquete 'openai' ---
 rem     graphify se instalo como herramienta uv con el nombre 'graphifyy'.
-echo   Asegurando dependencias de graphify para Ollama (openai)...
-uv tool install "graphifyy[ollama]" --force
+echo   Asegurando dependencias de graphify (Ollama + servidor MCP)...
+uv tool install "graphifyy[ollama,mcp]" --force
 if !errorlevel! neq 0 (
-    echo   [WARN] Fallo 'uv tool install graphifyy[ollama]'. Proba manualmente:
-    echo          uv tool install "graphifyy[ollama]" --force
+    echo   [WARN] Fallo 'uv tool install graphifyy[ollama,mcp]'. Proba manualmente:
+    echo          uv tool install "graphifyy[ollama,mcp]" --force
 )
 
 rem --- 3) Servidor de Ollama corriendo? ---

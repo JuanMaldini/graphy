@@ -8,12 +8,18 @@ if not exist "%TPL%" (
     endlocal & exit /b 0
 )
 
-echo Desplegando .graphifyignore en cada repo (solo si falta)...
+echo Desplegando .graphifyignore en cada repo (crea o actualiza si cambio)...
 for %%R in ("%GRAPHIFY_REPOS:;=" "%") do (
     set "R=%%~R"
     if exist "!R!" (
         if exist "!R!\.graphifyignore" (
-            echo   [OK] ya existe -^> !R!\.graphifyignore
+            fc "%TPL%" "!R!\.graphifyignore" >nul 2>&1
+            if !errorlevel! equ 0 (
+                echo   [OK] al dia -^> !R!\.graphifyignore
+            ) else (
+                copy /Y "%TPL%" "!R!\.graphifyignore" >nul
+                if !errorlevel! equ 0 (echo   [~] actualizado -^> !R!\.graphifyignore) else (echo   [WARN] no se pudo actualizar en !R!)
+            )
         ) else (
             copy /Y "%TPL%" "!R!\.graphifyignore" >nul
             if !errorlevel! equ 0 (echo   [+] creado -^> !R!\.graphifyignore) else (echo   [WARN] no se pudo crear en !R!)

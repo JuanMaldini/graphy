@@ -12,6 +12,27 @@ where python >nul 2>&1 && echo   python OK || echo   python MISSING
 where git    >nul 2>&1 && echo   git OK    || echo   git MISSING
 where winget >nul 2>&1 && echo   winget OK || echo   winget MISSING
 where uv     >nul 2>&1 && echo   uv OK     || echo   uv MISSING
+
+rem --- PATH persistente de las herramientas de uv (sobrevive reinicios) ---
+rem     _env.bat ya lo agrego a esta sesion; aca lo dejamos guardado en el
+rem     PATH del usuario para futuras consolas y las tareas programadas.
+echo ;%PATH%; | find /I ";%UV_BIN%;" >nul
+if !errorlevel! neq 0 (
+    echo   Agregando %UV_BIN% al PATH del usuario ^(persistente^)...
+    for /f "skip=2 tokens=2,*" %%a in ('reg query "HKCU\Environment" /v Path 2^>nul') do set "USER_PATH=%%b"
+    if defined USER_PATH (
+        setx PATH "%UV_BIN%;!USER_PATH!" >nul
+    ) else (
+        setx PATH "%UV_BIN%" >nul
+    )
+)
+
+rem --- graphify instalado? Si no, instalarlo ahora (no esperar a ollama.bat) ---
+where graphify >nul 2>&1
+if !errorlevel! neq 0 (
+    echo   graphify no encontrado. Instalando con uv...
+    uv tool install "graphifyy[ollama,mcp]" --force
+)
 where graphify >nul 2>&1 && echo   graphify OK || echo   graphify MISSING
 echo.
 
